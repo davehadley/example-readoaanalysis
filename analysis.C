@@ -20,6 +20,48 @@ ND::TTrackerECALReconModule::TECALReconObject* matchECalGlobalToLocal(ND::TGloba
     return lecal;
 }
 
+void printBasicGlobalInfo(ND::TGlobalReconModule::TGlobalPID* globalObj) {
+    //Print some basic information about the object
+    int numtpc = globalObj->NTPCs;
+    int numecal = globalObj->NECALs;
+    std::cout << "Global Object " << globalObj->UniqueID << " : contains ";
+    std::cout << numtpc << " tpc, "
+              << numecal << " ecal."
+              << std::endl;
+    return;
+}
+
+void printBasicTpcInfo(ND::TGlobalReconModule::TGlobalPID* globalObj) {
+    //Print some TPC information
+    int numtpc = globalObj->NTPCs;
+    for (int itpc = 0; itpc < numtpc; ++itpc) {
+        ND::TGlobalReconModule::TTPCObject* tpcobj = dynamic_cast<ND::TGlobalReconModule::TTPCObject*>(globalObj->TPC->At(itpc));
+        std::cout << "TPC track " << itpc << " : p=" << tpcobj->FrontMomentum << "MeV" << std::endl;
+    }
+    return;
+}
+
+
+void printBasicECalInfo(ND::TGlobalReconModule::TGlobalPID* globalObj, TClonesArray* ecalObjects) {
+    //Print some ECal information
+    int numecal = globalObj->NECALs;
+    for (int iecal = 0; iecal < numecal; ++iecal) {
+        ND::TGlobalReconModule::TECALObject* gecal = dynamic_cast<ND::TGlobalReconModule::TECALObject*>(globalObj->ECAL->At(iecal));
+        //Global ECal object only contains a subset of the ECal information.
+        //To get the full ECal information we need to get the "local" ECal object.
+        ND::TTrackerECALReconModule::TECALReconObject* lecal = matchECalGlobalToLocal(gecal, ecalObjects);
+        if (lecal) {
+            double emenergy = lecal->EMEnergyFit_Result;
+            double mipem = lecal->PID_LLR_MIP_EM;
+            std::cout << "ECal cluster" << iecal << " :"
+                      << " emenergy=" << emenergy 
+                      << " LLR_MIP_EM=" << mipem
+                      << std::endl;
+        }
+    }
+}
+
+
 int analysis() {
 
     //Open file and get the trees we want to analyse
@@ -55,33 +97,9 @@ int analysis() {
             if (!globalObj) {
                 throw std::runtime_error("failed to retrieve global object from array.");
             }
-            //Print some basic information about the object
-            int numtpc = globalObj->NTPCs;
-            int numecal = globalObj->NECALs;
-            std::cout << "Global Object " << iglobal << " : contains ";
-            std::cout << numtpc << " tpc, "
-                      << numecal << " ecal."
-                      << std::endl;
-            //Print some TPC information
-            for (int itpc = 0; itpc < numtpc; ++itpc) {
-                ND::TGlobalReconModule::TTPCObject* tpcobj = dynamic_cast<ND::TGlobalReconModule::TTPCObject*>(globalObj->TPC->At(itpc));
-                std::cout << "TPC track " << itpc << " : p=" << tpcobj->FrontMomentum << "MeV" << std::endl;
-            }
-            //Print some ECal information
-            for (int iecal = 0; iecal < numecal; ++iecal) {
-                ND::TGlobalReconModule::TECALObject* gecal = dynamic_cast<ND::TGlobalReconModule::TECALObject*>(globalObj->ECAL->At(iecal));
-                //Global ECal object only contains a subset of the ECal information.
-                //To get the full ECal information we need to get the "local" ECal object.
-                ND::TTrackerECALReconModule::TECALReconObject* lecal = matchECalGlobalToLocal(gecal, ecalObjects);
-                if (lecal) {
-                    double emenergy = lecal->EMEnergyFit_Result;
-                    double mipem = lecal->PID_LLR_MIP_EM;
-                    std::cout << "ECal cluster" << iecal << " :"
-                              << " emenergy=" << emenergy 
-                              << " LLR_MIP_EM=" << mipem
-                              << std::endl;
-                }
-            }
+            printBasicGlobalInfo(globalObj);
+            printBasicTpcInfo(globalObj);
+            printBasicECalInfo(globalObj, ecalObjects);
         }
     }
     
