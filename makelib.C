@@ -1,7 +1,7 @@
 #include "TFile.h"
 
 void makelib() {
-    TFile tfile("test.oanalysisfile.root", "READ");
-    tfile.MakeProject("liboanalysis", "*", "update+");
+    TFile tfile("test.oaanalysisfile.root", "READ");
+    tfile.MakeProject("liboaanalysis", "*", "update+");
     return;
 }
