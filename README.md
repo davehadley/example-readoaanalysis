@@ -3,6 +3,8 @@ example-readoaanalysis
 
 This package provides a simple example for new T2K students to read ND280 OA analysis files using only ROOT and no other external libraries.
 
+Before you start you will need an oaAnalysis input file. The scripts are hard coded to look for a file named "test.oaanalysisfile.root" in the current working directory. You should make sure this file exists, or edit the scripts to point to a real file before proceeding.
+
 There are two steps involved. First you must generate the libraries needed to read the oaAnalysis file. This is done with the [TFile::MakeProject](http://root.cern.ch/root/html/TFile.html) method. This is done by running the makelib.C script:
 
     root -l makelib.C+
