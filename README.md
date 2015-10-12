@@ -1,7 +1,10 @@
 example-readoaanalysis
 ============
 
-This package provides a simple example for new T2K students to read ND280 OA analysis files using only ROOT and no other external libraries.
+This package provides a simple example for new T2K students to read [ND280 OA analysis files](http://hep.lancs.ac.uk/nd280Doc/stable/invariant/oaAnalysis/) using only [ROOT](https://root.cern.ch) and no other external libraries.
+
+Compiling and Running the Example Analysis
+------------
 
 Before you start you will need an oaAnalysis input file. The scripts are hard coded to look for a file named "test.oaanalysisfile.root" in the current working directory. You should make sure this file exists, or edit the scripts to point to a real file before proceeding.
 
@@ -17,13 +20,26 @@ You can run the example analysis code with:
 
     root -l run.C
 
-This loads the libraries that we have just created and then runs the analysis script "analysis.C". 
-Notice that this time we omitted the trailing "+". 
-This is because there is you need to load the library before you can successfully compile the analysis script.
-This cyclic dependency makes compilation impossible.
-"analysis.C" contains a simple analysis script that loops over global recon objects and prints information to stdout.
+This script loads the libraries that were generated in the previous step, compiles "analysis.C" and runs the method "analysis()". "analysis.C" contains a simple analysis script that loops over global recon objects and prints information to stdout.
 
 Congratulations, you have successfully run your first oaAnalysis analysis!
 
+Reading Files Interactively
+------------
+You can also read analysis files in an interactive ROOT session.
 
+    root -l 
+    
+To view to file contents in a GUI, in an interactive session do:
+
+    [0] gSystem->Load("liboaanalysis/liboaanalysis.so"); // load libraries
+    [1] TBrowser b;
+
+From the [TBrowser](https://root.cern.ch/doc/master/classTBrowser.html) window you can double click on the analysis file to open it.
+
+You can make simple plots using the [TTree::Draw](https://root.cern.ch/doc/master/classTTree.html) command.
+
+    [2] TFile* f = new TFile("test.oaanalysisfile.root");
+    [3] TTree* t = (TTree*) f->Get("ReconDir/TrackerECal");
+    [4] t->Draw("ReconObject.PID_LLR_MIP_EM");
 
