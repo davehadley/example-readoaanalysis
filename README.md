@@ -7,9 +7,8 @@ Before you start you will need an oaAnalysis input file. The scripts are hard co
 
 There are two steps involved. First you must generate the libraries needed to read the oaAnalysis file. This is done with the [TFile::MakeProject](http://root.cern.ch/root/html/TFile.html) method. This is done by running the makelib.C script:
 
-    root -l makelib.C+
+    root -l makelib.C
 
-The trailing "+" forces ROOT to compile the script before running it (which is optional but is good practice). 
 The "-l" option prevents the annoying ROOT splash screen.
 This script should create a directory "liboaanalysis" containing the header files and library that you will need.
 If it worked you should see that it contains a file "liboaanalysis/liboaanalysis.so". You are now ready to analyse an oaAnalysis file.
